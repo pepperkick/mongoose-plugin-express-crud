@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 module.exports = (schema, options) => {
-    
+
     // check if base plugin is available
     let thisPlugin = '@abskmj/mongoose-plugin-express-crud';
     let basePlugin = '@abskmj/mongoose-plugin-express'
@@ -10,8 +10,8 @@ module.exports = (schema, options) => {
     if (!(schema.statics.attachRouter instanceof Function)) {
         throw new Error(`${thisPlugin} plugin is dependent on ${basePlugin}`);
     }
-    
-    
+
+
     // routes
     let router = express.Router();
 
@@ -108,14 +108,34 @@ module.exports = (schema, options) => {
             next(err);
         }
     }
-    
+
+    const findByIdAndUpdate = async(req, res, nxt) => {
+        try {
+            let id = req.params.id;
+            let update = req.body || {};
+            let options = req.query.option || {};
+
+            // always returm updated document
+            options = Object.assign({ new: true }, options);
+
+            let doc = await req.model.findByIdAndUpdate(id, update, options).lean();
+
+            res.json(doc);
+
+            nxt();
+
+        }
+        catch (err) {
+            nxt(err);
+        }
+    }
+
     // mount routes
-    router.post('/', create);
-    router.get('/', find);
+    router.route('/').get(find).post(create);
     router.get('/count', count);
     router.get('/aggregate', aggregate);
-    router.get('/:id', findById);
-    
+    router.route('/:id').get(findById).put(findByIdAndUpdate);
+
     // mount router
     schema.statics.attachRouter(router);
 }
