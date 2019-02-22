@@ -1,0 +1,25 @@
+{
+  "name": "@abskmj/mongoose-plugin-express-crud",
+  "version": "1.0.0",
+  "description": "Mongoose plugin for basic create, read, update, delete express routes / apis",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abskmj/mongoose-plugin-express-crud.git"
+  },
+  "keywords": [
+    "express",
+    "router",
+    "api",
+    "crud"
+  ],
+  "author": "abskmj@gmail.com",
+  "license": "MIT",
+  "peerDependencies": {
+    "express": "x",
+    "mongoose": "x"
+  }
+}
