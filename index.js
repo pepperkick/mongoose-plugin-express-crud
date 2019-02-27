@@ -109,16 +109,33 @@ module.exports = (schema, options) => {
         }
     }
 
-    const findByIdAndUpdate = async(req, res, nxt) => {
+    const updateById = async(req, res, nxt) => {
         try {
             let id = req.params.id;
             let update = req.body || {};
             let options = req.query.option || {};
 
-            // always returm updated document
+            // always return updated document
             options = Object.assign({ new: true }, options);
 
             let doc = await req.model.findByIdAndUpdate(id, update, options).lean();
+
+            res.json(doc);
+
+            nxt();
+
+        }
+        catch (err) {
+            nxt(err);
+        }
+    }
+    
+    const deleteById = async(req, res, nxt) => {
+        try {
+            let id = req.params.id;
+            let options = req.query.option || {};
+
+            let doc = await req.model.findByIdAndDelete(id, options).lean();
 
             res.json(doc);
 
@@ -134,7 +151,7 @@ module.exports = (schema, options) => {
     router.route('/').get(find).post(create);
     router.get('/count', count);
     router.get('/aggregate', aggregate);
-    router.route('/:id').get(findById).put(findByIdAndUpdate);
+    router.route('/:id').get(findById).put(updateById).delete(deleteById);
 
     // mount router
     schema.statics.attachRouter(router);
