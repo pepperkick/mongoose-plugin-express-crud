@@ -2,6 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 module.exports = (schema, options) => {
+    let defaultOptions = {
+        disable: []
+    }
+
+    // merge options
+    options = Object.assign({}, defaultOptions, options);
 
     // check if base plugin is available
     let thisPlugin = '@abskmj/mongoose-plugin-express-crud';
@@ -11,11 +17,20 @@ module.exports = (schema, options) => {
         throw new Error(`${thisPlugin} plugin is dependent on ${basePlugin}`);
     }
 
+    let pluggable = (slug, route) => {
+        if (options.disable.includes(slug)) {
+            return (req, res, nxt) => nxt();
+        }
+        else {
+            return route;
+        }
+    }
+
 
     // routes
     let router = express.Router();
 
-    const create = async(req, res, next) => {
+    const create = pluggable('create', async(req, res, next) => {
         try {
             let data = req.body;
 
@@ -28,9 +43,9 @@ module.exports = (schema, options) => {
         catch (err) {
             next(err);
         }
-    }
+    });
 
-    const find = async(req, res, next) => {
+    const find = pluggable('find', async(req, res, next) => {
         try {
             let conditions = req.query.where || {};
             let projection = req.query.projection || {};
@@ -45,9 +60,9 @@ module.exports = (schema, options) => {
         catch (err) {
             next(err);
         }
-    };
+    });
 
-    const findById = async(req, res, next) => {
+    const findById = pluggable('findById', async(req, res, next) => {
         if (["count", "aggregate"].includes(req.params.id)) return next();
 
         try {
@@ -64,9 +79,9 @@ module.exports = (schema, options) => {
         catch (err) {
             next(err);
         }
-    };
+    });
 
-    const count = async(req, res, next) => {
+    const count = pluggable('count', async(req, res, next) => {
         try {
             let count = await req.model.countDocuments(req.query.where);
 
@@ -77,9 +92,9 @@ module.exports = (schema, options) => {
         catch (err) {
             next(err);
         }
-    }
+    });
 
-    const aggregate = async(req, res, next) => {
+    const aggregate = pluggable('aggregate', async(req, res, next) => {
         try {
 
             let pipelines = req.query.aggregate;
@@ -107,9 +122,9 @@ module.exports = (schema, options) => {
         catch (err) {
             next(err);
         }
-    }
+    });
 
-    const updateById = async(req, res, nxt) => {
+    const updateById = pluggable('updateById', async(req, res, nxt) => {
         try {
             let id = req.params.id;
             let update = req.body || {};
@@ -128,9 +143,9 @@ module.exports = (schema, options) => {
         catch (err) {
             nxt(err);
         }
-    }
-    
-    const deleteById = async(req, res, nxt) => {
+    });
+
+    const deleteById = pluggable('deleteById', async(req, res, nxt) => {
         try {
             let id = req.params.id;
             let options = req.query.option || {};
@@ -145,7 +160,7 @@ module.exports = (schema, options) => {
         catch (err) {
             nxt(err);
         }
-    }
+    });
 
     // mount routes
     router.route('/').get(find).post(create);
