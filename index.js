@@ -70,7 +70,7 @@ module.exports = (schema, options) => {
             let projection = req.query.projection || {};
             let options = req.query.option || {};
 
-            let doc = await req.model.findById(id, projection, options).lean();
+            let doc = await req.model.findById(id, projection, options);
 
             res.json(doc);
 
@@ -133,7 +133,7 @@ module.exports = (schema, options) => {
             // always return updated document
             options = Object.assign({ new: true }, options);
 
-            let doc = await req.model.findByIdAndUpdate(id, update, options).lean();
+            let doc = await req.model.findByIdAndUpdate(id, update, options);
 
             res.json(doc);
 
@@ -150,7 +150,7 @@ module.exports = (schema, options) => {
             let id = req.params.id;
             let options = req.query.option || {};
 
-            let doc = await req.model.findByIdAndDelete(id, options).lean();
+            let doc = await req.model.findByIdAndDelete(id, options);
 
             res.json(doc);
 
