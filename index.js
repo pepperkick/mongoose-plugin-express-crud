@@ -70,7 +70,7 @@ module.exports = (schema, options) => {
             let projection = req.query.projection || {};
             let options = req.query.option || {};
 
-            let doc = await req.model.findById(id, projection, options);
+            let doc = await req.model.findById(id, projection, options).lean();
 
             res.json(doc);
 
