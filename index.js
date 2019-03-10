@@ -13,7 +13,7 @@ module.exports = (schema, options) => {
     let thisPlugin = '@abskmj/mongoose-plugin-express-crud';
     let basePlugin = '@abskmj/mongoose-plugin-express'
 
-    if (!(schema.statics.attachRouter instanceof Function)) {
+    if (!(schema.statics.router.attach instanceof Function)) {
         throw new Error(`${thisPlugin} plugin is dependent on ${basePlugin}`);
     }
 
@@ -169,5 +169,5 @@ module.exports = (schema, options) => {
     router.route('/:id').get(findById).put(updateById).delete(deleteById);
 
     // mount router
-    schema.statics.attachRouter(router);
+    schema.statics.router.attach(router);
 }
