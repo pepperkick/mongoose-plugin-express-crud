@@ -30,7 +30,7 @@ module.exports = (schema, options) => {
         try {
             let conditions = req.query.where || {};
             let projection = req.query.projection || {};
-            let options = req.query.option || {};
+            let options = req.query.options || {};
 
             let data = await req.model.find(conditions, projection, options).lean();
 
@@ -47,7 +47,7 @@ module.exports = (schema, options) => {
         try {
             let id = req.params.id;
             let projection = req.query.projection || {};
-            let options = req.query.option || {};
+            let options = req.query.options || {};
 
             let doc = await req.model.findById(id, projection, options).lean();
 
@@ -112,7 +112,7 @@ module.exports = (schema, options) => {
         try {
             let id = req.params.id;
             let update = req.body || {};
-            let options = req.query.option || {};
+            let options = req.query.options || {};
 
             // always return updated document
             options = Object.assign({ new: true }, options);
@@ -138,7 +138,7 @@ module.exports = (schema, options) => {
     const deleteById = pluggable('deleteById', async(req, res, nxt) => {
         try {
             let id = req.params.id;
-            let options = req.query.option || {};
+            let options = req.query.options || {};
 
             let doc = await req.model.findByIdAndDelete(id, options).lean();
 
