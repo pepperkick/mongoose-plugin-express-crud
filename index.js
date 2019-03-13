@@ -63,8 +63,6 @@ module.exports = (schema, options) => {
     });
 
     const findById = pluggable('findById', async(req, res, next) => {
-        if (["count", "aggregate"].includes(req.params.id)) return next();
-
         try {
             let id = req.params.id;
             let projection = req.query.projection || {};
@@ -100,7 +98,6 @@ module.exports = (schema, options) => {
             let pipelines = req.query.aggregate;
 
             // convert id to ObjectId recursively
-
             for (let pipeline of pipelines) {
                 if (pipeline.$match) {
                     for (let field in pipeline.$match) {
@@ -166,7 +163,7 @@ module.exports = (schema, options) => {
     router.route('/').get(find).post(create);
     router.get('/count', count);
     router.get('/aggregate', aggregate);
-    router.route('/:id').get(findById).put(updateById).delete(deleteById);
+    router.route('/@:id').get(findById).put(updateById).delete(deleteById);
 
     // mount router
     schema.statics.router.attach(router);
