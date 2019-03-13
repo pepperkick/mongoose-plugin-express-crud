@@ -8,15 +8,8 @@ module.exports = (schema, options) => {
 
     // merge options
     options = Object.assign({}, defaultOptions, options);
-
-    let pluggable = (slug, route) => {
-        if (options.disable.includes(slug)) {
-            return (req, res, nxt) => nxt();
-        }
-        else {
-            return route;
-        }
-    }
+    
+    let pluggable = schema.statics.router.Pluggable(options.disable);
 
     const create = pluggable('create', async(req, res, next) => {
         try {
@@ -50,7 +43,7 @@ module.exports = (schema, options) => {
         }
     });
 
-    const findById = pluggable('findById', async(req, res, next) => {
+    const findById = pluggable('findById', async(req, res, nxt) => {
         try {
             let id = req.params.id;
             let projection = req.query.projection || {};
@@ -58,12 +51,18 @@ module.exports = (schema, options) => {
 
             let doc = await req.model.findById(id, projection, options).lean();
 
-            res.json(doc);
+            if (doc) {
 
-            next();
+                res.json(doc);
+
+                nxt();
+            }
+            else {
+                throw new req.errors.ResourceNotFound();
+            }
         }
         catch (err) {
-            next(err);
+            nxt(err);
         }
     });
 
@@ -120,9 +119,15 @@ module.exports = (schema, options) => {
 
             let doc = await req.model.findByIdAndUpdate(id, update, options).lean();
 
-            res.json(doc);
+            if (doc) {
 
-            nxt();
+                res.json(doc);
+
+                nxt();
+            }
+            else {
+                throw new req.errors.ResourceNotFound();
+            }
 
         }
         catch (err) {
@@ -137,16 +142,22 @@ module.exports = (schema, options) => {
 
             let doc = await req.model.findByIdAndDelete(id, options).lean();
 
-            res.json(doc);
+            if (doc) {
 
-            nxt();
+                res.json(doc);
+
+                nxt();
+            }
+            else {
+                throw new req.errors.ResourceNotFound();
+            }
 
         }
         catch (err) {
             nxt(err);
         }
     });
-    
+
     // routes
     let router = express.Router();
 

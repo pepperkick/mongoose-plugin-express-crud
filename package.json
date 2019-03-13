@@ -21,6 +21,6 @@
   "peerDependencies": {
     "express": "^4.0.0",
     "mongoose": "^5.0.0",
-    "@abskmj/mongoose-plugin-express": "github:abskmj/mongoose-plugin-express#caa381311caf1ed33809b7679aafe684ff2a6b77"
+    "@abskmj/mongoose-plugin-express": "github:abskmj/mongoose-plugin-express#2bc6570c0a09c0c4182705d05cc8309815b32cda"
   }
 }
