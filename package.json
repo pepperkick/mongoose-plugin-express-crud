@@ -19,7 +19,8 @@
   "author": "abskmj@gmail.com",
   "license": "MIT",
   "peerDependencies": {
-    "express": "x",
-    "mongoose": "x"
+    "express": "^4.0.0",
+    "mongoose": "^5.0.0",
+    "@abskmj/mongoose-plugin-express": "github:abskmj/mongoose-plugin-express#caa381311caf1ed33809b7679aafe684ff2a6b77"
   }
 }

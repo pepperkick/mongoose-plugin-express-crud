@@ -9,14 +9,6 @@ module.exports = (schema, options) => {
     // merge options
     options = Object.assign({}, defaultOptions, options);
 
-    // check if base plugin is available
-    let thisPlugin = '@abskmj/mongoose-plugin-express-crud';
-    let basePlugin = '@abskmj/mongoose-plugin-express'
-
-    if (!(schema.statics.router.attach instanceof Function)) {
-        throw new Error(`${thisPlugin} plugin is dependent on ${basePlugin}`);
-    }
-
     let pluggable = (slug, route) => {
         if (options.disable.includes(slug)) {
             return (req, res, nxt) => nxt();
@@ -25,10 +17,6 @@ module.exports = (schema, options) => {
             return route;
         }
     }
-
-
-    // routes
-    let router = express.Router();
 
     const create = pluggable('create', async(req, res, next) => {
         try {
@@ -158,6 +146,9 @@ module.exports = (schema, options) => {
             nxt(err);
         }
     });
+    
+    // routes
+    let router = express.Router();
 
     // mount routes
     router.route('/').get(find).post(create);
